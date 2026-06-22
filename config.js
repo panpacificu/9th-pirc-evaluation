@@ -3,7 +3,7 @@ window.PIRC_CONFIG = Object.freeze({
   VERSION: "1.0.0",
 
   // Paste the deployed Apps Script Web App URL here.
-  ENDPOINT_URL: "PASTE_APPS_SCRIPT_WEB_APP_URL_HERE",
+  ENDPOINT_URL: "https://script.google.com/macros/s/AKfycbwQXFJyJhZnkoE8TLuZIpW3QSKid-KNcoiBvmXsDV152kYdviD2sAa10YjaXc2sz-3T/exec",
 
   SCHOOLS: {
     "Batch 1": [
