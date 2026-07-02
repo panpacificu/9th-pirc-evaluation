@@ -1,6 +1,15 @@
 # Changelog
 
 
+## 1.2.2 — Speaker Validation Fix
+
+- Removed character-for-character speaker-name validation.
+- Validates only the three required speaker ratings.
+- Uses canonical speaker names from `Config.gs`.
+- Clears unused Speaker 4 fields automatically.
+- Fixes false valid-speaker errors.
+
+
 ## 1.2.1 — Certificate Preview Fix
 
 - Corrected `getLineFill().setTransparent()` to `Border.setTransparent()`.

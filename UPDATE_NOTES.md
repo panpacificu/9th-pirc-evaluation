@@ -1,42 +1,19 @@
-# Updating from v1.2.0 to v1.2.1
+# Updating from v1.2.1 to v1.2.2
 
-## Fixed Errors
-
-This version fixes:
+This release fixes the false error:
 
 ```text
-TypeError: shape.getBorder(...).getLineFill(...).setTransparent is not a function
+Please complete the valid speaker evaluation questions.
 ```
 
-The corrected Slides method is:
+The backend no longer compares browser-submitted speaker names character-for-character. It now validates only the three required speaker ratings and uses the official speaker names from `Config.gs`.
 
-```javascript
-shape.getBorder().setTransparent();
-```
+## Update Steps
 
-It also includes explicit Google Drive and Google Slides authorization scopes.
+1. Replace `Code.gs` with the v1.2.2 file.
+2. Save the project.
+3. Go to **Deploy → Manage deployments → Edit**.
+4. Select **New version** and deploy.
+5. Keep the same `/exec` URL.
 
-## Installation
-
-1. Replace your Apps Script `Code.gs` with the v1.2.1 file.
-2. Open **Project Settings** in Apps Script.
-3. Enable **Show "appsscript.json" manifest file in editor**.
-4. Open `appsscript.json`.
-5. Replace its contents with `apps-script/appsscript.json` from this package.
-6. Save the project.
-7. Run:
-
-```javascript
-createCertificatePreview()
-```
-
-8. Approve all requested access, including Google Drive and Google Slides.
-9. When the preview succeeds, update the Web App through:
-
-**Deploy → Manage deployments → Edit → New version → Deploy**
-
-Keep your current `/exec` URL.
-
-## If Google Does Not Ask Again
-
-If the Drive permission error remains without showing a new authorization prompt, remove the project's existing Google Account access and run `createCertificatePreview()` again.
+You do not need to run `setupProject()` again, and no Sheet columns need to be changed.
