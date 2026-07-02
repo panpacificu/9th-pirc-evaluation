@@ -1,9 +1,11 @@
 window.PIRC_CONFIG = Object.freeze({
   APP_NAME: "9th PIRC Evaluation Form",
-  VERSION: "1.0.0",
+  VERSION: "1.2.0",
 
-  // Paste the deployed Apps Script Web App URL here.
-  ENDPOINT_URL: "https://script.google.com/macros/s/AKfycbwQXFJyJhZnkoE8TLuZIpW3QSKid-KNcoiBvmXsDV152kYdviD2sAa10YjaXc2sz-3T/exec",
+  // Preserve your currently deployed Apps Script Web App /exec URL here.
+  ENDPOINT_URL: "PASTE_APPS_SCRIPT_WEB_APP_URL_HERE",
+
+  ENABLED_BATCHES: ["Batch 1"],
 
   SCHOOLS: {
     "Batch 1": [
@@ -18,19 +20,24 @@ window.PIRC_CONFIG = Object.freeze({
     ]
   },
 
-  // Replace the placeholders once the official speaker names are available.
   SPEAKERS: {
     "Batch 1": [
-      "Speaker 1 — Name to be added",
-      "Speaker 2 — Name to be added",
-      "Speaker 3 — Name to be added",
-      "Speaker 4 — Name to be added"
+      {
+        name: "Phillip Clark",
+        designation: "Kindai University, Japan",
+        image: "assets/speakers/phillip-clark.webp"
+      },
+      {
+        name: "Aurelio Agcaoili",
+        designation: "University of Hawaii in Manoa",
+        image: "assets/speakers/aurelio-agcaoili.webp"
+      },
+      {
+        name: "Le Ha Van",
+        designation: "FPT Ho Chi Minh, Vietnam",
+        image: "assets/speakers/le-ha-van.webp"
+      }
     ],
-    "Batch 2": [
-      "Speaker 1 — Name to be added",
-      "Speaker 2 — Name to be added",
-      "Speaker 3 — Name to be added",
-      "Speaker 4 — Name to be added"
-    ]
+    "Batch 2": []
   }
 });

@@ -19,6 +19,11 @@
   const setupNotice = document.getElementById("setupNotice");
   const fullName = document.getElementById("fullName");
   const nameError = document.getElementById("nameError");
+  const formStatusLoading = document.getElementById("formStatusLoading");
+  const closedPanel = document.getElementById("closedPanel");
+  const closedMessage = document.getElementById("closedMessage");
+
+  let formIsOpen = true;
 
   const ratingLabels = [
     { value: "1", label: "Very Dissatisfied" },
@@ -61,27 +66,48 @@
 
   function escapeText(value) {
     const temp = document.createElement("div");
-    temp.textContent = value;
+    temp.textContent = value ?? "";
     return temp.innerHTML;
   }
 
-  function ratingRow({ name, label }) {
+  function buildQuestionContent(item) {
+    if (!item.image) {
+      return escapeText(item.label);
+    }
+
+    return `
+      <div class="speaker-question">
+        <img
+          class="speaker-avatar"
+          src="${escapeText(item.image)}"
+          alt=""
+          loading="lazy"
+        >
+        <div class="speaker-copy">
+          <strong>${escapeText(item.label)}</strong>
+          <small>${escapeText(item.designation)}</small>
+        </div>
+      </div>
+    `;
+  }
+
+  function ratingRow(item) {
     const options = ratingLabels.map(({ value, label: ratingLabel }) => `
       <label class="rating-option">
         <input
           type="radio"
-          name="${escapeText(name)}"
+          name="${escapeText(item.name)}"
           value="${value}"
           required
-          aria-label="${escapeText(label)} — ${escapeText(ratingLabel)}"
+          aria-label="${escapeText(item.label)} — ${escapeText(ratingLabel)}"
         >
         <span><em>${value}</em>${escapeText(ratingLabel)}</span>
       </label>
     `).join("");
 
     return `
-      <div class="rating-row">
-        <div class="rating-question">${escapeText(label)}</div>
+      <div class="rating-row ${item.image ? "rating-row--speaker" : ""}">
+        <div class="rating-question">${buildQuestionContent(item)}</div>
         ${options}
       </div>
     `;
@@ -92,7 +118,18 @@
     experienceQuestions.innerHTML = experienceItems.map(ratingRow).join("");
   }
 
+  function clearSpeakerHiddenFields() {
+    for (let index = 1; index <= 4; index += 1) {
+      const field = document.getElementById(`speaker${index}Name`);
+      if (field) field.value = "";
+    }
+  }
+
   function renderBatchFields(batch) {
+    if (!CONFIG.ENABLED_BATCHES.includes(batch)) {
+      return;
+    }
+
     const schools = CONFIG.SCHOOLS[batch] || [];
     const speakers = CONFIG.SPEAKERS[batch] || [];
 
@@ -103,9 +140,11 @@
     schoolSelect.disabled = false;
     schoolField.hidden = false;
 
-    const speakerItems = speakers.map((label, index) => ({
+    const speakerItems = speakers.map((speaker, index) => ({
       name: `speaker${index + 1}Rating`,
-      label
+      label: speaker.name,
+      designation: speaker.designation,
+      image: speaker.image
     }));
 
     speakerItems.push({
@@ -115,8 +154,11 @@
 
     speakerQuestions.innerHTML = speakerItems.map(ratingRow).join("");
 
+    clearSpeakerHiddenFields();
+
     speakers.slice(0, 4).forEach((speaker, index) => {
-      document.getElementById(`speaker${index + 1}Name`).value = speaker;
+      document.getElementById(`speaker${index + 1}Name`).value =
+        `${speaker.name} — ${speaker.designation}`;
     });
 
     updateProgress();
@@ -199,23 +241,79 @@
     return data;
   }
 
-  async function submitEvaluation(payload) {
-    const response = await fetch(CONFIG.ENDPOINT_URL, {
-      method: "POST",
+  async function requestJson(url, options = {}) {
+    const response = await fetch(url, {
       redirect: "follow",
+      cache: "no-store",
+      ...options
+    });
+
+    if (!response.ok) {
+      throw new Error(`Request failed with HTTP ${response.status}.`);
+    }
+
+    return response.json();
+  }
+
+  async function loadFormStatus() {
+    if (!isEndpointConfigured()) {
+      setupNotice.hidden = false;
+      formStatusLoading.hidden = true;
+      form.hidden = false;
+      return;
+    }
+
+    try {
+      const separator = CONFIG.ENDPOINT_URL.includes("?") ? "&" : "?";
+      const status = await requestJson(
+        `${CONFIG.ENDPOINT_URL}${separator}action=status&_=${Date.now()}`
+      );
+
+      formIsOpen = status.isOpen !== false;
+      formStatusLoading.hidden = true;
+
+      if (formIsOpen) {
+        form.hidden = false;
+        closedPanel.hidden = true;
+      } else {
+        form.hidden = true;
+        closedPanel.hidden = false;
+        closedMessage.textContent =
+          status.closedMessage ||
+          "We are not currently accepting responses. Please check again later.";
+      }
+    } catch (error) {
+      console.error("Unable to verify form status:", error);
+      formStatusLoading.hidden = true;
+      form.hidden = false;
+      showMessage(
+        "The form status could not be verified. You may continue, but submission will still be checked by the server.",
+        "error"
+      );
+    }
+  }
+
+  async function submitEvaluation(payload) {
+    const result = await requestJson(CONFIG.ENDPOINT_URL, {
+      method: "POST",
       headers: {
         "Content-Type": "text/plain;charset=utf-8"
       },
       body: JSON.stringify(payload)
     });
 
-    if (!response.ok) {
-      throw new Error(`Submission failed with HTTP ${response.status}.`);
-    }
-
-    const result = await response.json();
-
     if (!result.ok) {
+      if (result.formClosed) {
+        formIsOpen = false;
+        form.hidden = true;
+        closedPanel.hidden = false;
+        closedMessage.textContent =
+          result.closedMessage ||
+          result.message ||
+          "We are not currently accepting responses.";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
       throw new Error(result.message || "The form could not be submitted.");
     }
 
@@ -237,6 +335,11 @@
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     clearMessage();
+
+    if (!formIsOpen) {
+      showMessage("The evaluation form is no longer accepting responses.");
+      return;
+    }
 
     if (!validateNameField()) {
       showMessage("Please correct the name format before submitting.");
@@ -271,10 +374,13 @@
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
       console.error(error);
-      showMessage(
-        error.message ||
-        "We could not submit your response. Please check your internet connection and try again."
-      );
+
+      if (formIsOpen) {
+        showMessage(
+          error.message ||
+          "We could not submit your response. Please check your internet connection and try again."
+        );
+      }
     } finally {
       setLoading(false);
     }
@@ -288,4 +394,5 @@
 
   renderStaticQuestions();
   updateProgress();
+  loadFormStatus();
 })();

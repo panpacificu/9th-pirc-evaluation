@@ -1,16 +1,23 @@
 # Changelog
 
+## 1.2.0 — Speakers and Certificate Delivery
+
+- Added Phillip Clark — Kindai University, Japan.
+- Added Aurelio Agcaoili — University of Hawaii in Manoa.
+- Added Le Ha Van — FPT Ho Chi Minh, Vietnam.
+- Added speaker image previews.
+- Reduced Batch 1 speaker evaluations to three official speakers.
+- Disabled Batch 2 in the frontend and Apps Script backend.
+- Added automatic PDF Certificate of Participation generation.
+- Added personalized certificate attachment to the confirmation email.
+- Added Certificate Status and Certificate Error columns.
+- Added certificate-delivery statistics to the admin dashboard.
+- Added `createCertificatePreview()` for authorization and testing.
+
+## 1.1.0 — Admin Dashboard and Form Control
+
+- Added the admin dashboard and server-enforced form availability switch.
+
 ## 1.0.0 — Initial Build
 
-- Added responsive 9th PIRC evaluation form.
-- Added Panpacific University-inspired color system.
-- Added Inter typography and lightweight card interface.
-- Added participant name, email, campus, batch, and school fields.
-- Added conditional Batch 1 and Batch 2 school options.
-- Added configurable speaker names for both batches.
-- Added speaker, presentation, socialization, venue, food, program flow, organization, and value-for-money ratings.
-- Added comments and suggestions field.
-- Added Google Sheets storage through Apps Script.
-- Added automatic confirmation email.
-- Added submission reference number and duplicate-click safeguards.
-- Added setup documentation and version display.
+- Added the responsive evaluation form, Google Sheets storage, and email confirmation.

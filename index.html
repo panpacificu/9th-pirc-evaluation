@@ -72,7 +72,21 @@
       Add the deployed Apps Script Web App URL in <code>config.js</code> before accepting live responses.
     </div>
 
-    <form id="evaluationForm" class="survey-form" novalidate>
+    <section id="formStatusLoading" class="status-panel status-panel--loading">
+      <div class="status-spinner" aria-hidden="true"></div>
+      <p>Checking whether the evaluation form is accepting responses...</p>
+    </section>
+
+    <section id="closedPanel" class="status-panel status-panel--closed" hidden>
+      <div class="closed-icon" aria-hidden="true">—</div>
+      <p class="section-eyebrow">Responses Closed</p>
+      <h2>The evaluation form is currently unavailable.</h2>
+      <p id="closedMessage">
+        We are not currently accepting responses. Please check again later.
+      </p>
+    </section>
+
+    <form id="evaluationForm" class="survey-form" novalidate hidden>
       <input type="text" name="website" class="honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
       <input type="hidden" name="submissionId" id="submissionId">
       <input type="hidden" name="startedAt" id="startedAt">
@@ -134,8 +148,14 @@
           <fieldset class="field">
             <legend>Batch <span aria-hidden="true">*</span></legend>
             <div class="choice-pills choice-pills--two">
-              <label><input type="radio" name="batch" value="Batch 1" required><span>Batch 1</span></label>
-              <label><input type="radio" name="batch" value="Batch 2" required><span>Batch 2</span></label>
+              <label>
+                <input type="radio" name="batch" value="Batch 1" required>
+                <span><strong>Batch 1</strong><small>Now available</small></span>
+              </label>
+              <label class="choice-disabled" aria-label="Batch 2 is not yet available">
+                <input type="radio" name="batch" value="Batch 2" disabled>
+                <span><strong>Batch 2</strong><small>Available later</small></span>
+              </label>
             </div>
           </fieldset>
 
@@ -156,6 +176,10 @@
             <h2 id="speakerHeading">Rate the speakers and discussion</h2>
           </div>
         </div>
+
+        <p class="section-intro">
+          Rate each Batch 1 speaker based on your conference experience.
+        </p>
 
         <div class="scale-key" aria-label="Rating scale">
           <span><b>1</b> Very Dissatisfied</span>
