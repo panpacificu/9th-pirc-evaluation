@@ -1,9 +1,9 @@
 window.PIRC_CONFIG = Object.freeze({
   APP_NAME: "9th PIRC Evaluation Form",
-  VERSION: "1.2.0",
+  VERSION: "1.2.1",
 
   // Preserve your currently deployed Apps Script Web App /exec URL here.
-  ENDPOINT_URL: "https://script.google.com/macros/s/AKfycbwQXFJyJhZnkoE8TLuZIpW3QSKid-KNcoiBvmXsDV152kYdviD2sAa10YjaXc2sz-3T/exec",
+  ENDPOINT_URL: "PASTE_APPS_SCRIPT_WEB_APP_URL_HERE",
 
   ENABLED_BATCHES: ["Batch 1"],
 

@@ -1,6 +1,6 @@
 # 9th PIRC Evaluation Form
 
-Version **1.2.0** adds the official Batch 1 speakers and automatic PDF certificate delivery.
+Version **1.2.1** adds the official Batch 1 speakers and automatic PDF certificate delivery.
 
 ## Batch 1 Speakers
 
@@ -75,3 +75,9 @@ pirc-evaluation-form-v1.2.0/
 ├── UPDATE_NOTES.md
 └── CHANGELOG.md
 ```
+
+## v1.2.1 Fix
+
+- Corrects the Slides transparent-border API call.
+- Adds explicit Sheets, Mail, Slides, and Drive OAuth scopes.
+- Includes an `appsscript.json` manifest for Apps Script.

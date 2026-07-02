@@ -1,5 +1,12 @@
 # Changelog
 
+
+## 1.2.1 — Certificate Preview Fix
+
+- Corrected `getLineFill().setTransparent()` to `Border.setTransparent()`.
+- Added explicit Google Sheets, Mail, Slides, and Drive OAuth scopes.
+- Added Apps Script reauthorization instructions.
+
 ## 1.2.0 — Speakers and Certificate Delivery
 
 - Added Phillip Clark — Kindai University, Japan.
