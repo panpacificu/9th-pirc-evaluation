@@ -1,5 +1,5 @@
 const APP_CONFIG = Object.freeze({
-  VERSION: '1.3.4',
+  VERSION: '1.3.6',
 
   // Preserve your current Google Sheet ID.
   SPREADSHEET_ID: '1vhj7Bink6MkS5sS0S1_lKqYfQlXDd2zHnfIAfBrMgh8',
@@ -18,6 +18,8 @@ const APP_CONFIG = Object.freeze({
     EVENT_NAME: '9th Panpacific International Research Conference',
     TITLE: 'Certificate of Participation',
     NAME_FONT: 'Alex Brush',
+    NAME_COLOR: '#3B762F',
+    NAME_BOX: { LEFT: 120, TOP: 168, WIDTH: 480, HEIGHT: 54 },
     VENUE: 'Urdaneta City Cultural & Sports Center',
     SIGNATORY_NAME: 'MARK JOSEPH T. CALANO, Ph.D.',
     SIGNATORY_TITLE: 'Vice President for Research and Innovation',

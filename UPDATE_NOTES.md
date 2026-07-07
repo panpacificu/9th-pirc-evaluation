@@ -1,61 +1,38 @@
-# Updating to v1.3.5
+# Updating to v1.3.6
 
-## Fix
+## Certificate Update
 
-This patch addresses the error:
+This version switches the certificate generation to an image-based template.
 
-```text
-Please complete all required rating questions.
-```
+The package now includes:
 
-The common cause is a mismatch between the updated Apps Script backend and an older cached GitHub frontend file.
+- `apps-script/CertificateTemplate.gs` — embedded blank certificate image
+- `apps-script/Code.gs` — generates the PDF using the embedded image background
+- `apps-script/Config.gs` — includes the name overlay settings
 
-This patch adds:
+## Files to replace in Apps Script
 
-1. Cache-busting query strings in `index.html`:
-   - `styles.css?v=1.3.5`
-   - `config.js?v=1.3.5`
-   - `app.js?v=1.3.5`
-
-2. A clearer backend error that lists the exact missing rating questions.
-
-## Files to Replace
-
-Replace these on GitHub:
-
-- `index.html`
-- `app.js`
-- `config.js`
-- `styles.css`
-
-Replace this in Apps Script:
+Replace or add these files:
 
 - `Code.gs`
 - `Config.gs`
+- `CertificateTemplate.gs`
 
-## After Updating
+You do not need to upload the certificate image separately to Google Drive.
 
-1. Save all files.
+## Then do this
+
+1. Save the Apps Script project.
 2. Run:
 
 ```javascript
-setupProject()
+createCertificatePreview()
 ```
 
-3. Redeploy Apps Script:
+3. Check the preview PDF in Google Drive.
+4. If the name needs slight repositioning, adjust `NAME_BOX` in `Config.gs`.
+5. Redeploy Apps Script:
 
 **Deploy → Manage deployments → Edit → New version → Deploy**
 
 Keep the same `/exec` URL.
-
-4. Open the public form in an incognito/private browser tab and test again.
-
-## Important
-
-Make sure the public form shows version:
-
-```text
-v1.3.5
-```
-
-If it still shows an older version, the browser or GitHub Pages is still serving cached files.

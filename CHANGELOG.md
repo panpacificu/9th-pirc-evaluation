@@ -1,6 +1,14 @@
 # Changelog
 
 
+## 1.3.6 — Image-Based Certificate Template
+
+- Switched certificate generation to use the official blank certificate image as the background.
+- Added `apps-script/CertificateTemplate.gs` with the embedded template image.
+- Overlays only the participant name on the certificate.
+- Added configurable name placement and color settings.
+
+
 ## 1.3.5 — Rating Validation Cache Patch
 
 - Added cache-busting query strings for CSS, config, and app JS files.

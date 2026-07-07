@@ -382,23 +382,33 @@ function validatePayload_(data) {
   }
 
   const fixedRatings = [
-    data.roundTableProfessionals,
-    data.roundTableStudents,
-    data.facultyPresentations,
-    data.liveStudentPresentations,
-    data.studentVideoPresentations,
-    data.posterSession,
-    data.socializationActivities,
-    data.venue,
-    data.food,
-    data.programFlow,
-    data.organization,
-    data.communication,
-    data.valueForMoney
+    ['Round Table Discussion — Professionals', data.roundTableProfessionals],
+    ['Round Table Discussion — Students', data.roundTableStudents],
+    ['Faculty Presentations', data.facultyPresentations],
+    ['Live Student Presentations', data.liveStudentPresentations],
+    ['Student Video Presentations', data.studentVideoPresentations],
+    ['Poster Presentation', data.posterSession],
+    ['Socialization Activities', data.socializationActivities],
+    ['Venue', data.venue],
+    ['Food', data.food],
+    ['Program Flow', data.programFlow],
+    ['Organization', data.organization],
+    ['Communication', data.communication],
+    ['Value for Money', data.valueForMoney]
   ];
 
-  if (!fixedRatings.every(isValidRating_)) {
-    return { ok: false, message: 'Please complete all required rating questions.' };
+  const missingFixedRatings = fixedRatings
+    .filter((pair) => !isValidRating_(pair[1]))
+    .map((pair) => pair[0]);
+
+  if (missingFixedRatings.length > 0) {
+    return {
+      ok: false,
+      message:
+        'Please complete these required rating questions: ' +
+        missingFixedRatings.join(', ') +
+        '. If you already answered them, refresh the page or clear the browser cache.'
+    };
   }
 
   return { ok: true };
@@ -904,6 +914,7 @@ function sendConfirmationEmail_(data) {
   }
 }
 
+
 function generateCertificatePdf_(data) {
   const presentationName =
     `${APP_CONFIG.CERTIFICATE.FILE_PREFIX}-${data.submissionId}`;
@@ -912,34 +923,40 @@ function generateCertificatePdf_(data) {
 
   try {
     const slide = presentation.getSlides()[0];
-
     slide.getPageElements().forEach((element) => element.remove());
     slide.getBackground().setSolidFill('#FFFFFF');
 
-    const templateFileId = APP_CONFIG.CERTIFICATE.TEMPLATE_IMAGE_FILE_ID || '';
+    const templateBlob = getCertificateTemplateBlob_();
+    slide.insertImage(templateBlob, 0, 0, 720, 405);
 
-    if (templateFileId) {
-      const imageBlob = DriveApp.getFileById(templateFileId).getBlob();
-      slide.insertImage(imageBlob, 0, 0, 720, 405);
-    } else {
-      drawCertificateTemplate_(slide);
-    }
+    const box = APP_CONFIG.CERTIFICATE.NAME_BOX || {
+      LEFT: 120,
+      TOP: 168,
+      WIDTH: 480,
+      HEIGHT: 54
+    };
 
     const nameFont = APP_CONFIG.CERTIFICATE.NAME_FONT || 'Alex Brush';
+    const nameColor = APP_CONFIG.CERTIFICATE.NAME_COLOR || '#3B762F';
+    const normalizedName = String(data.fullName || '').trim();
     const nameSize =
-      data.fullName.length > 42 ? 27 :
-      data.fullName.length > 32 ? 32 :
-      38;
+      normalizedName.length > 42 ? 28 :
+      normalizedName.length > 32 ? 33 :
+      normalizedName.length > 24 ? 38 :
+      42;
 
     addCertificateText_(
       slide,
-      data.fullName,
-      120, 168, 480, 50,
+      normalizedName,
+      box.LEFT,
+      box.TOP,
+      box.WIDTH,
+      box.HEIGHT,
       {
         fontSize: nameSize,
         bold: false,
         fontFamily: nameFont,
-        color: '#3B762F',
+        color: nameColor,
         align: SlidesApp.ParagraphAlignment.CENTER
       }
     );
@@ -948,7 +965,7 @@ function generateCertificatePdf_(data) {
     Utilities.sleep(700);
 
     const presentationFile = DriveApp.getFileById(presentationId);
-    const safeName = sanitizeFileName_(data.fullName);
+    const safeName = sanitizeFileName_(normalizedName);
     const pdfBlob = presentationFile
       .getAs(MimeType.PDF)
       .setName(
@@ -974,83 +991,30 @@ function generateCertificatePdf_(data) {
   }
 }
 
-function drawCertificateTemplate_(slide) {
-  const navy = '#233F79';
-  const green = '#3B762F';
+function getCertificateTemplateBlob_() {
+  if (
+    typeof CERTIFICATE_TEMPLATE_IMAGE !== 'undefined' &&
+    CERTIFICATE_TEMPLATE_IMAGE &&
+    CERTIFICATE_TEMPLATE_IMAGE.BASE64
+  ) {
+    const bytes = Utilities.base64Decode(CERTIFICATE_TEMPLATE_IMAGE.BASE64);
+    return Utilities.newBlob(
+      bytes,
+      CERTIFICATE_TEMPLATE_IMAGE.MIME_TYPE || 'image/jpeg',
+      'certificate-template.jpg'
+    );
+  }
 
-  addCertificateText_(slide, 'PANPACIFIC\nUNIVERSITY', 295, 49, 130, 36, {
-    fontSize: 11,
-    bold: true,
-    color: navy,
-    align: SlidesApp.ParagraphAlignment.CENTER
-  });
+  const templateFileId = APP_CONFIG.CERTIFICATE.TEMPLATE_IMAGE_FILE_ID || '';
 
-  addCertificateShape_(slide, SlidesApp.ShapeType.PARALLELOGRAM, 322, 24, 42, 11, green);
-  addCertificateShape_(slide, SlidesApp.ShapeType.PARALLELOGRAM, 355, 24, 38, 11, navy);
+  if (templateFileId) {
+    return DriveApp.getFileById(templateFileId).getBlob();
+  }
 
-  addCertificateText_(slide, 'awards this', 292, 91, 136, 20, {
-    fontSize: 14,
-    color: navy,
-    align: SlidesApp.ParagraphAlignment.CENTER
-  });
-
-  addCertificateText_(slide, APP_CONFIG.CERTIFICATE.TITLE, 130, 112, 460, 42, {
-    fontSize: 31,
-    bold: true,
-    color: navy,
-    align: SlidesApp.ParagraphAlignment.CENTER
-  });
-
-  addCertificateText_(slide, 'to', 342, 154, 36, 17, {
-    fontSize: 13,
-    color: navy,
-    align: SlidesApp.ParagraphAlignment.CENTER
-  });
-
-  addCertificateText_(slide, 'for actively participating in the 9th Panpacific International Research Conference, held at the', 95, 218, 530, 24, {
-    fontSize: 12.5,
-    color: navy,
-    align: SlidesApp.ParagraphAlignment.CENTER
-  });
-
-  addCertificateText_(slide, 'Urdaneta City Cultural & Sports Center on 13–14 July 2026.', 158, 242, 405, 24, {
-    fontSize: 12.5,
-    color: navy,
-    align: SlidesApp.ParagraphAlignment.CENTER
-  });
-
-  addCertificateText_(slide, 'Digitally signed by: Mark Joseph T. Calano\nDate: 06 July 2026 | 11:30 AM', 328, 278, 170, 23, {
-    fontSize: 6.6,
-    bold: true,
-    color: '#111111',
-    align: SlidesApp.ParagraphAlignment.START
-  });
-
-  addCertificateText_(slide, APP_CONFIG.CERTIFICATE.SIGNATORY_NAME || 'MARK JOSEPH T. CALANO, Ph.D.', 260, 305, 260, 20, {
-    fontSize: 12.5,
-    bold: true,
-    color: navy,
-    align: SlidesApp.ParagraphAlignment.CENTER
-  });
-
-  addCertificateText_(slide, APP_CONFIG.CERTIFICATE.SIGNATORY_TITLE || 'Vice President for Research and Innovation', 260, 325, 260, 18, {
-    fontSize: 10.5,
-    color: navy,
-    align: SlidesApp.ParagraphAlignment.CENTER
-  });
-
-  const bottomY = 360;
-  addCertificateText_(slide, '9th PIRC', 59, bottomY, 70, 18, {fontSize: 11, bold: true, color: '#0A7198', align: SlidesApp.ParagraphAlignment.CENTER});
-  addCertificateText_(slide, 'UNITY &\nDIVERSITY', 132, bottomY, 60, 22, {fontSize: 8.5, bold: true, color: navy, align: SlidesApp.ParagraphAlignment.CENTER});
-  addCertificateText_(slide, '|', 205, bottomY, 12, 18, {fontSize: 13, color: navy, align: SlidesApp.ParagraphAlignment.CENTER});
-  addCertificateText_(slide, 'AUTONOMOUS\nSTATUS', 220, bottomY, 86, 22, {fontSize: 9, bold: true, color: navy, align: SlidesApp.ParagraphAlignment.CENTER});
-  addCertificateText_(slide, 'QS STARS', 313, bottomY + 2, 58, 16, {fontSize: 8, bold: true, color: '#D3942C', align: SlidesApp.ParagraphAlignment.CENTER});
-  addCertificateText_(slide, 'WURI', 380, bottomY, 60, 18, {fontSize: 12, bold: true, color: navy, align: SlidesApp.ParagraphAlignment.CENTER});
-  addCertificateText_(slide, 'UI Green\nMetric', 443, bottomY, 50, 22, {fontSize: 7.5, bold: true, color: '#3B762F', align: SlidesApp.ParagraphAlignment.CENTER});
-  addCertificateText_(slide, 'THE\nImpact Rankings', 504, bottomY, 86, 22, {fontSize: 7.3, bold: true, color: '#111111', align: SlidesApp.ParagraphAlignment.CENTER});
-  addCertificateText_(slide, 'SUSTAINABLE DEVELOPMENT GOALS', 592, bottomY, 90, 22, {fontSize: 7.5, bold: true, color: '#00A7E1', align: SlidesApp.ParagraphAlignment.CENTER});
+  throw new Error(
+    'Certificate template image is missing. Add CertificateTemplate.gs or set TEMPLATE_IMAGE_FILE_ID in Config.gs.'
+  );
 }
-
 
 function addCertificateShape_(
   slide,

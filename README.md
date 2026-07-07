@@ -1,6 +1,6 @@
 # 9th PIRC Evaluation Form
 
-Version **1.3.5** updates the evaluation structure, speaker affiliation, and certificate template.
+Version **1.3.6** updates the evaluation structure, speaker affiliation, and certificate template.
 
 ## Evaluation Updates
 
@@ -122,3 +122,24 @@ The public page now loads:
 ```
 
 This helps prevent users from submitting with old cached frontend files.
+
+
+## v1.3.6 Certificate Background Update
+
+The certificate generator now uses the official blank certificate image as the full-slide background and overlays only the participant name.
+
+### Apps Script files added/updated
+
+- `apps-script/CertificateTemplate.gs` — contains the embedded certificate template image
+- `apps-script/Code.gs` — now reads the embedded template image
+- `apps-script/Config.gs` — includes name placement settings
+
+### Name overlay settings
+
+```javascript
+NAME_FONT: 'Alex Brush',
+NAME_COLOR: '#3B762F',
+NAME_BOX: { LEFT: 120, TOP: 168, WIDTH: 480, HEIGHT: 54 },
+```
+
+If you need to fine-tune name placement later, adjust `NAME_BOX` in `Config.gs`.
