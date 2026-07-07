@@ -14,15 +14,18 @@ const SHEET_HEADERS = Object.freeze([
   'Speaker 3 Rating (1-4)',
   'Speaker 4 Name',
   'Speaker 4 Rating (1-4)',
-  'Round Table Discussion (1-4)',
+  'Round Table Discussion - Professionals (1-4)',
+  'Round Table Discussion - Students (1-4)',
+  'Faculty Presentations (1-4)',
   'Live Student Presentations (1-4)',
   'Student Video Presentations (1-4)',
-  'Poster Session (1-4)',
-  'Socialization Event (1-4)',
+  'Poster Presentation (1-4)',
+  'Socialization Activities (1-4)',
   'Venue (1-4)',
   'Food (1-4)',
   'Program Flow (1-4)',
   'Organization (1-4)',
+  'Communication (1-4)',
   'Value for Money (1-4)',
   'Comments and Suggestions',
   'Email Status',
@@ -144,7 +147,7 @@ function handleEvaluationSubmission_(request) {
     ) {
       return jsonResponse_({
         ok: false,
-        message: 'A response for this email address and batch has already been recorded.'
+        message: 'A response and certificate for this email address and batch have already been recorded. Only one certificate can be issued per participant email.'
       });
     }
 
@@ -163,12 +166,12 @@ function handleEvaluationSubmission_(request) {
 
   const deliveryResult = sendConfirmationEmail_(payload);
 
-  sheet.getRange(rowNumber, 27, 1, 2).setValues([[
+  sheet.getRange(rowNumber, 30, 1, 2).setValues([[
     deliveryResult.emailSent ? 'Sent' : 'Not Sent',
     deliveryResult.emailError || ''
   ]]);
 
-  sheet.getRange(rowNumber, 31, 1, 2).setValues([[
+  sheet.getRange(rowNumber, 34, 1, 2).setValues([[
     deliveryResult.certificateStatus,
     deliveryResult.certificateError || ''
   ]]);
@@ -294,15 +297,18 @@ function parseSubmissionPayload_(data) {
     speaker3Rating: cleanText_(data.speaker3Rating, 1),
     speaker4Name: cleanText_(data.speaker4Name, 180),
     speaker4Rating: cleanText_(data.speaker4Rating, 1),
-    roundTableDiscussion: cleanText_(data.roundTableDiscussion, 1),
+    roundTableProfessionals: cleanText_(data.roundTableProfessionals, 1),
+    roundTableStudents: cleanText_(data.roundTableStudents, 1),
+    facultyPresentations: cleanText_(data.facultyPresentations, 1),
     liveStudentPresentations: cleanText_(data.liveStudentPresentations, 1),
     studentVideoPresentations: cleanText_(data.studentVideoPresentations, 1),
     posterSession: cleanText_(data.posterSession, 1),
-    socializationEvent: cleanText_(data.socializationEvent, 1),
+    socializationActivities: cleanText_(data.socializationActivities, 1),
     venue: cleanText_(data.venue, 1),
     food: cleanText_(data.food, 1),
     programFlow: cleanText_(data.programFlow, 1),
     organization: cleanText_(data.organization, 1),
+    communication: cleanText_(data.communication, 1),
     valueForMoney: cleanText_(data.valueForMoney, 1),
     comments: cleanText_(data.comments, 2000),
     website: cleanText_(data.website, 200),
@@ -329,6 +335,16 @@ function validatePayload_(data) {
 
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
     return { ok: false, message: 'Please enter a valid email address.' };
+  }
+
+  const allowedEmailDomain = String(APP_CONFIG.ALLOWED_EMAIL_DOMAIN || 'panpacificu.edu.ph').toLowerCase();
+  const organizerEmail = APP_CONFIG.ORGANIZER_EMAIL || 'pirc@panpacificu.edu.ph';
+
+  if (!data.email.endsWith(`@${allowedEmailDomain}`)) {
+    return {
+      ok: false,
+      message: `Use your PanpacificU Email. For outsiders, please contact the organizer, ${organizerEmail}.`
+    };
   }
 
   if (!APP_CONFIG.CAMPUSES.includes(data.campus)) {
@@ -366,15 +382,18 @@ function validatePayload_(data) {
   }
 
   const fixedRatings = [
-    data.roundTableDiscussion,
+    data.roundTableProfessionals,
+    data.roundTableStudents,
+    data.facultyPresentations,
     data.liveStudentPresentations,
     data.studentVideoPresentations,
     data.posterSession,
-    data.socializationEvent,
+    data.socializationActivities,
     data.venue,
     data.food,
     data.programFlow,
     data.organization,
+    data.communication,
     data.valueForMoney
   ];
 
@@ -528,16 +547,19 @@ function getAdminDashboardData_() {
     });
 
     const fixedRatings = [
-      ['Round Table Discussion', row[15]],
-      ['Live Student Presentations', row[16]],
-      ['Student Video Presentations', row[17]],
-      ['Poster Session', row[18]],
-      ['Socialization Event', row[19]],
-      ['Venue', row[20]],
-      ['Food', row[21]],
-      ['Program Flow', row[22]],
-      ['Organization', row[23]],
-      ['Value for Money', row[24]]
+      ['Round Table Discussion - Professionals', row[15]],
+      ['Round Table Discussion - Students', row[16]],
+      ['Faculty Presentations', row[17]],
+      ['Live Student Presentations', row[18]],
+      ['Student Video Presentations', row[19]],
+      ['Poster Presentation', row[20]],
+      ['Socialization Activities', row[21]],
+      ['Venue', row[22]],
+      ['Food', row[23]],
+      ['Program Flow', row[24]],
+      ['Organization', row[25]],
+      ['Communication', row[26]],
+      ['Value for Money', row[27]]
     ];
 
     fixedRatings.forEach((pair) => {
@@ -551,7 +573,7 @@ function getAdminDashboardData_() {
       }
     });
 
-    const emailStatus = cleanText_(row[26], 40).toLowerCase();
+    const emailStatus = cleanText_(row[29], 40).toLowerCase();
 
     if (emailStatus === 'sent') {
       emailSent += 1;
@@ -561,7 +583,7 @@ function getAdminDashboardData_() {
       emailPending += 1;
     }
 
-    const certificateStatus = cleanText_(row[30], 80).toLowerCase();
+    const certificateStatus = cleanText_(row[33], 80).toLowerCase();
 
     if (certificateStatus === 'sent') {
       certificateSent += 1;
@@ -578,7 +600,8 @@ function getAdminDashboardData_() {
     .map((row) => {
       const ratings = [
         row[8], row[10], row[12], row[14], row[15], row[16], row[17],
-        row[18], row[19], row[20], row[21], row[22], row[23], row[24]
+        row[18], row[19], row[20], row[21], row[22], row[23], row[24],
+        row[25], row[26], row[27]
       ]
         .map(Number)
         .filter(isDashboardRating_);
@@ -600,14 +623,14 @@ function getAdminDashboardData_() {
     });
 
   const recentComments = rows
-    .filter((row) => cleanText_(row[25], 2000))
+    .filter((row) => cleanText_(row[28], 2000))
     .slice(-20)
     .reverse()
     .map((row) => ({
       timestamp: serializeDate_(row[0]),
       fullName: cleanText_(row[2], 100),
       batch: cleanText_(row[5], 30),
-      comment: cleanText_(row[25], 2000)
+      comment: cleanText_(row[28], 2000)
     }));
 
   const ratingAverages = Object.keys(ratingAggregates)
@@ -758,15 +781,18 @@ function buildRow_(data) {
     sheetRating_(data.speaker3Rating),
     data.speaker4Name,
     sheetRating_(data.speaker4Rating),
-    sheetRating_(data.roundTableDiscussion),
+    sheetRating_(data.roundTableProfessionals),
+    sheetRating_(data.roundTableStudents),
+    sheetRating_(data.facultyPresentations),
     sheetRating_(data.liveStudentPresentations),
     sheetRating_(data.studentVideoPresentations),
     sheetRating_(data.posterSession),
-    sheetRating_(data.socializationEvent),
+    sheetRating_(data.socializationActivities),
     sheetRating_(data.venue),
     sheetRating_(data.food),
     sheetRating_(data.programFlow),
     sheetRating_(data.organization),
+    sheetRating_(data.communication),
     sheetRating_(data.valueForMoney),
     data.comments,
     'Pending',
@@ -777,7 +803,6 @@ function buildRow_(data) {
     ''
   ];
 }
-
 function sheetRating_(value) {
   return isValidRating_(value) ? Number(value) : '';
 }
@@ -889,182 +914,32 @@ function generateCertificatePdf_(data) {
     const slide = presentation.getSlides()[0];
 
     slide.getPageElements().forEach((element) => element.remove());
-    slide.getBackground().setSolidFill('#F7FBFF');
+    slide.getBackground().setSolidFill('#FFFFFF');
 
-    addCertificateShape_(
-      slide, SlidesApp.ShapeType.RECTANGLE,
-      0, 0, 240, 13, '#359447'
-    );
-    addCertificateShape_(
-      slide, SlidesApp.ShapeType.RECTANGLE,
-      240, 0, 240, 13, '#008F8C'
-    );
-    addCertificateShape_(
-      slide, SlidesApp.ShapeType.RECTANGLE,
-      480, 0, 240, 13, '#075CAA'
-    );
+    const templateFileId = APP_CONFIG.CERTIFICATE.TEMPLATE_IMAGE_FILE_ID || '';
 
-    addCertificateShape_(
-      slide, SlidesApp.ShapeType.ELLIPSE,
-      -70, 260, 230, 230, '#DDF5E4'
-    );
-    addCertificateShape_(
-      slide, SlidesApp.ShapeType.ELLIPSE,
-      590, -80, 220, 220, '#DCEEFF'
-    );
+    if (templateFileId) {
+      const imageBlob = DriveApp.getFileById(templateFileId).getBlob();
+      slide.insertImage(imageBlob, 0, 0, 720, 405);
+    } else {
+      drawCertificateTemplate_(slide);
+    }
 
-    const border = slide.insertShape(
-      SlidesApp.ShapeType.RECTANGLE,
-      18, 20, 684, 365
-    );
-    border.getFill().setTransparent();
-    border.getBorder().getLineFill().setSolidFill('#075CAA');
-    border.getBorder().setWeight(1.5);
-
-    addCertificateText_(
-      slide,
-      'PANPACIFIC UNIVERSITY',
-      54, 33, 310, 24,
-      {
-        fontSize: 15,
-        bold: true,
-        color: '#075CAA',
-        align: SlidesApp.ParagraphAlignment.START
-      }
-    );
-
-    addCertificateText_(
-      slide,
-      'UNITY & DIVERSITY',
-      432, 35, 235, 22,
-      {
-        fontSize: 12,
-        bold: true,
-        color: '#359447',
-        align: SlidesApp.ParagraphAlignment.END
-      }
-    );
-
-    addCertificateText_(
-      slide,
-      APP_CONFIG.CERTIFICATE.EVENT_NAME.toUpperCase(),
-      72, 70, 576, 23,
-      {
-        fontSize: 11,
-        bold: true,
-        color: '#008F8C',
-        align: SlidesApp.ParagraphAlignment.CENTER
-      }
-    );
-
-    addCertificateText_(
-      slide,
-      APP_CONFIG.CERTIFICATE.TITLE,
-      60, 97, 600, 38,
-      {
-        fontSize: 27,
-        bold: true,
-        color: '#075CAA',
-        align: SlidesApp.ParagraphAlignment.CENTER
-      }
-    );
-
-    addCertificateText_(
-      slide,
-      'This certificate is proudly presented to',
-      115, 139, 490, 24,
-      {
-        fontSize: 12,
-        color: '#52657A',
-        align: SlidesApp.ParagraphAlignment.CENTER
-      }
-    );
-
-    const recipientFontSize =
-      data.fullName.length > 38 ? 23 :
-      data.fullName.length > 28 ? 27 :
-      31;
+    const nameFont = APP_CONFIG.CERTIFICATE.NAME_FONT || 'Alex Brush';
+    const nameSize =
+      data.fullName.length > 42 ? 27 :
+      data.fullName.length > 32 ? 32 :
+      38;
 
     addCertificateText_(
       slide,
       data.fullName,
-      70, 167, 580, 48,
+      120, 168, 480, 50,
       {
-        fontSize: recipientFontSize,
-        bold: true,
-        color: '#10243E',
-        align: SlidesApp.ParagraphAlignment.CENTER
-      }
-    );
-
-    addCertificateShape_(
-      slide, SlidesApp.ShapeType.RECTANGLE,
-      155, 216, 410, 2, '#008F8C'
-    );
-
-    const batchDate =
-      APP_CONFIG.CERTIFICATE.BATCH_DETAILS[data.batch] || '';
-
-    addCertificateText_(
-      slide,
-      `for participating in ${data.batch} of the 9th Panpacific International Research Conference, held on ${batchDate} at the ${APP_CONFIG.CERTIFICATE.VENUE}.`,
-      104, 231, 512, 49,
-      {
-        fontSize: 11,
-        color: '#40566D',
-        align: SlidesApp.ParagraphAlignment.CENTER
-      }
-    );
-
-    addCertificateText_(
-      slide,
-      `Campus: ${data.campus}   |   School: ${data.school}`,
-      95, 285, 530, 25,
-      {
-        fontSize: 8.5,
-        color: '#64748B',
-        align: SlidesApp.ParagraphAlignment.CENTER
-      }
-    );
-
-    addCertificateShape_(
-      slide, SlidesApp.ShapeType.RECTANGLE,
-      122, 335, 155, 1, '#64748B'
-    );
-    addCertificateShape_(
-      slide, SlidesApp.ShapeType.RECTANGLE,
-      443, 335, 155, 1, '#64748B'
-    );
-
-    addCertificateText_(
-      slide,
-      'Conference Chair',
-      115, 340, 170, 18,
-      {
-        fontSize: 8.5,
-        color: '#52657A',
-        align: SlidesApp.ParagraphAlignment.CENTER
-      }
-    );
-
-    addCertificateText_(
-      slide,
-      'Authorized University Representative',
-      422, 340, 198, 18,
-      {
-        fontSize: 8.5,
-        color: '#52657A',
-        align: SlidesApp.ParagraphAlignment.CENTER
-      }
-    );
-
-    addCertificateText_(
-      slide,
-      `Certificate Reference: ${data.submissionId}`,
-      248, 369, 224, 12,
-      {
-        fontSize: 6.5,
-        color: '#7C8C9D',
+        fontSize: nameSize,
+        bold: false,
+        fontFamily: nameFont,
+        color: '#3B762F',
         align: SlidesApp.ParagraphAlignment.CENTER
       }
     );
@@ -1098,6 +973,84 @@ function generateCertificatePdf_(data) {
     throw error;
   }
 }
+
+function drawCertificateTemplate_(slide) {
+  const navy = '#233F79';
+  const green = '#3B762F';
+
+  addCertificateText_(slide, 'PANPACIFIC\nUNIVERSITY', 295, 49, 130, 36, {
+    fontSize: 11,
+    bold: true,
+    color: navy,
+    align: SlidesApp.ParagraphAlignment.CENTER
+  });
+
+  addCertificateShape_(slide, SlidesApp.ShapeType.PARALLELOGRAM, 322, 24, 42, 11, green);
+  addCertificateShape_(slide, SlidesApp.ShapeType.PARALLELOGRAM, 355, 24, 38, 11, navy);
+
+  addCertificateText_(slide, 'awards this', 292, 91, 136, 20, {
+    fontSize: 14,
+    color: navy,
+    align: SlidesApp.ParagraphAlignment.CENTER
+  });
+
+  addCertificateText_(slide, APP_CONFIG.CERTIFICATE.TITLE, 130, 112, 460, 42, {
+    fontSize: 31,
+    bold: true,
+    color: navy,
+    align: SlidesApp.ParagraphAlignment.CENTER
+  });
+
+  addCertificateText_(slide, 'to', 342, 154, 36, 17, {
+    fontSize: 13,
+    color: navy,
+    align: SlidesApp.ParagraphAlignment.CENTER
+  });
+
+  addCertificateText_(slide, 'for actively participating in the 9th Panpacific International Research Conference, held at the', 95, 218, 530, 24, {
+    fontSize: 12.5,
+    color: navy,
+    align: SlidesApp.ParagraphAlignment.CENTER
+  });
+
+  addCertificateText_(slide, 'Urdaneta City Cultural & Sports Center on 13–14 July 2026.', 158, 242, 405, 24, {
+    fontSize: 12.5,
+    color: navy,
+    align: SlidesApp.ParagraphAlignment.CENTER
+  });
+
+  addCertificateText_(slide, 'Digitally signed by: Mark Joseph T. Calano\nDate: 06 July 2026 | 11:30 AM', 328, 278, 170, 23, {
+    fontSize: 6.6,
+    bold: true,
+    color: '#111111',
+    align: SlidesApp.ParagraphAlignment.START
+  });
+
+  addCertificateText_(slide, APP_CONFIG.CERTIFICATE.SIGNATORY_NAME || 'MARK JOSEPH T. CALANO, Ph.D.', 260, 305, 260, 20, {
+    fontSize: 12.5,
+    bold: true,
+    color: navy,
+    align: SlidesApp.ParagraphAlignment.CENTER
+  });
+
+  addCertificateText_(slide, APP_CONFIG.CERTIFICATE.SIGNATORY_TITLE || 'Vice President for Research and Innovation', 260, 325, 260, 18, {
+    fontSize: 10.5,
+    color: navy,
+    align: SlidesApp.ParagraphAlignment.CENTER
+  });
+
+  const bottomY = 360;
+  addCertificateText_(slide, '9th PIRC', 59, bottomY, 70, 18, {fontSize: 11, bold: true, color: '#0A7198', align: SlidesApp.ParagraphAlignment.CENTER});
+  addCertificateText_(slide, 'UNITY &\nDIVERSITY', 132, bottomY, 60, 22, {fontSize: 8.5, bold: true, color: navy, align: SlidesApp.ParagraphAlignment.CENTER});
+  addCertificateText_(slide, '|', 205, bottomY, 12, 18, {fontSize: 13, color: navy, align: SlidesApp.ParagraphAlignment.CENTER});
+  addCertificateText_(slide, 'AUTONOMOUS\nSTATUS', 220, bottomY, 86, 22, {fontSize: 9, bold: true, color: navy, align: SlidesApp.ParagraphAlignment.CENTER});
+  addCertificateText_(slide, 'QS STARS', 313, bottomY + 2, 58, 16, {fontSize: 8, bold: true, color: '#D3942C', align: SlidesApp.ParagraphAlignment.CENTER});
+  addCertificateText_(slide, 'WURI', 380, bottomY, 60, 18, {fontSize: 12, bold: true, color: navy, align: SlidesApp.ParagraphAlignment.CENTER});
+  addCertificateText_(slide, 'UI Green\nMetric', 443, bottomY, 50, 22, {fontSize: 7.5, bold: true, color: '#3B762F', align: SlidesApp.ParagraphAlignment.CENTER});
+  addCertificateText_(slide, 'THE\nImpact Rankings', 504, bottomY, 86, 22, {fontSize: 7.3, bold: true, color: '#111111', align: SlidesApp.ParagraphAlignment.CENTER});
+  addCertificateText_(slide, 'SUSTAINABLE DEVELOPMENT GOALS', 592, bottomY, 90, 22, {fontSize: 7.5, bold: true, color: '#00A7E1', align: SlidesApp.ParagraphAlignment.CENTER});
+}
+
 
 function addCertificateShape_(
   slide,
@@ -1136,7 +1089,7 @@ function addCertificateText_(
   const textRange = shape.getText();
   const style = textRange.getTextStyle();
 
-  style.setFontFamily('Inter');
+  style.setFontFamily(options.fontFamily || 'Inter');
   style.setFontSize(options.fontSize || 10);
   style.setForegroundColor(options.color || '#10243E');
   style.setBold(Boolean(options.bold));

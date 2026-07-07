@@ -1,64 +1,111 @@
-# Changelog
+# 9th PIRC Evaluation Form
+
+Version **1.3.4** updates the evaluation structure, speaker affiliation, and certificate template.
+
+## Evaluation Updates
+
+### Round Table Discussions
+
+- Round Table Discussion — Professionals
+- Round Table Discussion — Students
+
+### Presentations
+
+- Faculty Presentations
+- Live Student Presentations
+- Student Video Presentations
+- Poster Presentation
+
+### Event Experience
+
+- Socialization Activities
+- Venue
+- Food
+- Program Flow
+- Organization
+- Communication
+- Value for Money
+
+## Speaker Update
+
+Le Ha Van is now listed as:
+
+```text
+Swinburne University of Technology, Vietnam
+```
+
+## Certificate Update
+
+The certificate generator now follows the provided Batch 1 certificate reference more closely. The participant name uses:
+
+```text
+Alex Brush
+```
+
+For exact rendering, upload a blank certificate background PNG/JPG to Google Drive and add this optional setting inside `APP_CONFIG.CERTIFICATE` in `Config.gs`:
+
+```javascript
+TEMPLATE_IMAGE_FILE_ID: 'PASTE_DRIVE_FILE_ID_HERE',
+```
+
+When set, the script uses that image as the full-slide certificate background and overlays only the participant name.
+
+## Required Update
+
+Replace:
+
+- `index.html`
+- `app.js`
+- `config.js`
+- `styles.css`
+- `Code.gs`
+- `Config.gs`
+
+Then run:
+
+```javascript
+setupProject()
+```
+
+Redeploy Apps Script as a new version and keep the same `/exec` URL.
 
 
-## 1.3.2 — Official Reply-To Email
+## v1.3.1 Live Configuration
 
-- Set confirmation email reply-to address to `pirc@panpacificu.edu.ph`.
+The package already includes:
 
+```javascript
+ENDPOINT_URL: "https://script.google.com/macros/s/AKfycbwQXFJyJhZnkoE8TLuZIpW3QSKid-KNcoiBvmXsDV152kYdviD2sAa10YjaXc2sz-3T/exec"
+```
 
-## 1.3.1 — Live Endpoint and Sheet Values
+and:
 
-- Inserted the live Apps Script Web App URL into `config.js`.
-- Inserted the live Google Spreadsheet ID into `Config.gs`.
-- Confirmed the response tab name as `Evaluation Responses`.
-
-
-## 1.3.0 — Evaluation Structure and Certificate Template Update
-
-- Split Round Table Discussions into Professionals and Students.
-- Added Faculty Presentations.
-- Updated student presentation labels to Live Student, Video Presentations, and Poster Presentation.
-- Renamed Socialization Event to Socialization Activities.
-- Added Communication to Event Experience.
-- Updated Le Ha Van's designation to Swinburne University of Technology, Vietnam.
-- Updated certificate generation to follow the provided Batch 1 reference.
-- Added Alex Brush as the certificate participant-name font.
-- Added optional certificate background image support through Drive file ID.
+```javascript
+SPREADSHEET_ID: '1vhj7Bink6MkS5sS0S1_lKqYfQlXDd2zHnfIAfBrMgh8'
+SHEET_NAME: 'Evaluation Responses'
+```
 
 
-## 1.2.2 — Speaker Validation Fix
+## v1.3.2 Reply-To Email
 
-- Removed character-for-character speaker-name validation.
-- Validates only the three required speaker ratings.
-- Uses canonical speaker names from `Config.gs`.
-- Clears unused Speaker 4 fields automatically.
-- Fixes false valid-speaker errors.
+The Apps Script `Config.gs` file now uses:
+
+```javascript
+REPLY_TO: 'pirc@panpacificu.edu.ph'
+```
 
 
-## 1.2.1 — Certificate Preview Fix
+## v1.3.3 Unique Certificate Rule
 
-- Corrected `getLineFill().setTransparent()` to `Border.setTransparent()`.
-- Added explicit Google Sheets, Mail, Slides, and Drive OAuth scopes.
-- Added Apps Script reauthorization instructions.
+The form now enforces one response/certificate per email address per batch:
 
-## 1.2.0 — Speakers and Certificate Delivery
+```javascript
+ENFORCE_ONE_RESPONSE_PER_EMAIL_AND_BATCH: true
+```
 
-- Added Phillip Clark — Kindai University, Japan.
-- Added Aurelio Agcaoili — University of Hawaii in Manoa.
-- Added Le Ha Van — FPT Ho Chi Minh, Vietnam.
-- Added speaker image previews.
-- Reduced Batch 1 speaker evaluations to three official speakers.
-- Disabled Batch 2 in the frontend and Apps Script backend.
-- Added automatic PDF Certificate of Participation generation.
-- Added personalized certificate attachment to the confirmation email.
-- Added Certificate Status and Certificate Error columns.
-- Added certificate-delivery statistics to the admin dashboard.
-- Added `createCertificatePreview()` for authorization and testing.
 
-## 1.1.0 — Admin Dashboard and Form Control
+## v1.3.4 Email Restriction
 
-- Added the admin dashboard and server-enforced form availability switch.
+Only emails ending in `@panpacificu.edu.ph` are accepted.
 
-## 1.0.0 — Initial Build
-
-- Added the responsive evaluation form, Google Sheets storage, and email confirmation.
+Outsiders are instructed to contact `pirc@panpacificu.edu.ph`.

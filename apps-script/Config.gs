@@ -1,14 +1,14 @@
 const APP_CONFIG = Object.freeze({
-  VERSION: '1.2.2',
+  VERSION: '1.3.4',
 
   // Preserve your current Google Sheet ID.
-  SPREADSHEET_ID: 'PASTE_GOOGLE_SHEET_ID_HERE',
+  SPREADSHEET_ID: '1vhj7Bink6MkS5sS0S1_lKqYfQlXDd2zHnfIAfBrMgh8',
   SHEET_NAME: 'Evaluation Responses',
 
   EMAIL: {
     ENABLED: true,
     SENDER_NAME: '9th PIRC Secretariat',
-    REPLY_TO: 'PASTE_OFFICIAL_REPLY_TO_EMAIL_HERE',
+    REPLY_TO: 'pirc@panpacificu.edu.ph',
     SUBJECT: '9th PIRC Evaluation and Certificate of Participation'
   },
 
@@ -16,8 +16,11 @@ const APP_CONFIG = Object.freeze({
     ENABLED: true,
     FILE_PREFIX: '9th-PIRC-Certificate',
     EVENT_NAME: '9th Panpacific International Research Conference',
-    TITLE: 'CERTIFICATE OF PARTICIPATION',
-    VENUE: 'Urdaneta City Cultural and Sports Center',
+    TITLE: 'Certificate of Participation',
+    NAME_FONT: 'Alex Brush',
+    VENUE: 'Urdaneta City Cultural & Sports Center',
+    SIGNATORY_NAME: 'MARK JOSEPH T. CALANO, Ph.D.',
+    SIGNATORY_TITLE: 'Vice President for Research and Innovation',
     BATCH_DETAILS: {
       'Batch 1': 'July 13-14, 2026',
       'Batch 2': 'July 23-24, 2026'
@@ -28,7 +31,10 @@ const APP_CONFIG = Object.freeze({
   // The backend also rejects Batch 2 submissions until it is added here.
   ENABLED_BATCHES: ['Batch 1'],
 
-  ENFORCE_ONE_RESPONSE_PER_EMAIL_AND_BATCH: false,
+  ENFORCE_ONE_RESPONSE_PER_EMAIL_AND_BATCH: true,
+
+  ALLOWED_EMAIL_DOMAIN: 'panpacificu.edu.ph',
+  ORGANIZER_EMAIL: 'pirc@panpacificu.edu.ph',
 
   DEFAULT_CLOSED_MESSAGE:
     'We are not currently accepting responses. Please check again later.',
@@ -52,7 +58,7 @@ const APP_CONFIG = Object.freeze({
     'Batch 1': [
       'Phillip Clark — Kindai University, Japan',
       'Aurelio Agcaoili — University of Hawaii in Manoa',
-      'Le Ha Van — FPT Ho Chi Minh, Vietnam'
+      'Le Ha Van — Swinburne University of Technology, Vietnam'
     ],
     'Batch 2': []
   }
