@@ -1,87 +1,64 @@
-# 9th PIRC Evaluation Form
+# Changelog
 
-Version **1.2.2** adds the official Batch 1 speakers and automatic PDF certificate delivery.
 
-## Batch 1 Speakers
+## 1.3.2 — Official Reply-To Email
 
-- Phillip Clark — Kindai University, Japan
-- Aurelio Agcaoili — University of Hawaii in Manoa
-- Le Ha Van — FPT Ho Chi Minh, Vietnam
+- Set confirmation email reply-to address to `pirc@panpacificu.edu.ph`.
 
-Each speaker includes a small image preview.
 
-## Batch 2
+## 1.3.1 — Live Endpoint and Sheet Values
 
-Batch 2 is displayed as **Available later** and cannot be selected. The Apps Script backend also rejects Batch 2 submissions.
+- Inserted the live Apps Script Web App URL into `config.js`.
+- Inserted the live Google Spreadsheet ID into `Config.gs`.
+- Confirmed the response tab name as `Evaluation Responses`.
 
-## Certificate Delivery
 
-After a successful submission, Apps Script:
+## 1.3.0 — Evaluation Structure and Certificate Template Update
 
-1. Saves the evaluation response.
-2. Generates a personalized PDF Certificate of Participation.
-3. Uses the participant name exactly as submitted.
-4. Attaches the PDF to the confirmation email.
-5. Records the delivery result in the Sheet.
+- Split Round Table Discussions into Professionals and Students.
+- Added Faculty Presentations.
+- Updated student presentation labels to Live Student, Video Presentations, and Poster Presentation.
+- Renamed Socialization Event to Socialization Activities.
+- Added Communication to Event Experience.
+- Updated Le Ha Van's designation to Swinburne University of Technology, Vietnam.
+- Updated certificate generation to follow the provided Batch 1 reference.
+- Added Alex Brush as the certificate participant-name font.
+- Added optional certificate background image support through Drive file ID.
 
-New columns:
 
-```text
-Certificate Status
-Certificate Error
-```
+## 1.2.2 — Speaker Validation Fix
 
-The temporary certificate includes the event, participant, batch, date, venue, campus, school, submission reference, and placeholder signature lines.
+- Removed character-for-character speaker-name validation.
+- Validates only the three required speaker ratings.
+- Uses canonical speaker names from `Config.gs`.
+- Clears unused Speaker 4 fields automatically.
+- Fixes false valid-speaker errors.
 
-## Required Authorization
 
-After updating Apps Script, run:
+## 1.2.1 — Certificate Preview Fix
 
-```javascript
-createCertificatePreview()
-```
+- Corrected `getLineFill().setTransparent()` to `Border.setTransparent()`.
+- Added explicit Google Sheets, Mail, Slides, and Drive OAuth scopes.
+- Added Apps Script reauthorization instructions.
 
-once. Approve Google Slides and Google Drive permissions. A sample certificate PDF will be saved to the script owner's Google Drive, and its URL will appear in the execution log.
+## 1.2.0 — Speakers and Certificate Delivery
 
-## Important Update Values
+- Added Phillip Clark — Kindai University, Japan.
+- Added Aurelio Agcaoili — University of Hawaii in Manoa.
+- Added Le Ha Van — FPT Ho Chi Minh, Vietnam.
+- Added speaker image previews.
+- Reduced Batch 1 speaker evaluations to three official speakers.
+- Disabled Batch 2 in the frontend and Apps Script backend.
+- Added automatic PDF Certificate of Participation generation.
+- Added personalized certificate attachment to the confirmation email.
+- Added Certificate Status and Certificate Error columns.
+- Added certificate-delivery statistics to the admin dashboard.
+- Added `createCertificatePreview()` for authorization and testing.
 
-Preserve your real values before replacing files:
+## 1.1.0 — Admin Dashboard and Form Control
 
-- `SPREADSHEET_ID` in Apps Script `Config.gs`
-- `EMAIL.REPLY_TO` in Apps Script `Config.gs`
-- `ENDPOINT_URL` in GitHub `config.js`
-- `ADMIN_KEY` remains in Apps Script Script Properties
+- Added the admin dashboard and server-enforced form availability switch.
 
-## Files
+## 1.0.0 — Initial Build
 
-```text
-pirc-evaluation-form-v1.2.0/
-├── index.html
-├── styles.css
-├── app.js
-├── config.js
-├── admin.html
-├── admin.css
-├── admin.js
-├── assets/
-│   └── speakers/
-│       ├── phillip-clark.webp
-│       ├── aurelio-agcaoili.webp
-│       └── le-ha-van.webp
-├── apps-script/
-│   ├── Config.gs
-│   └── Code.gs
-├── README.md
-├── UPDATE_NOTES.md
-└── CHANGELOG.md
-```
-
-## v1.2.1 Fix
-
-- Corrects the Slides transparent-border API call.
-- Adds explicit Sheets, Mail, Slides, and Drive OAuth scopes.
-- Includes an `appsscript.json` manifest for Apps Script.
-
-## v1.2.2
-
-Speaker validation now uses the official backend list and checks rating values only.
+- Added the responsive evaluation form, Google Sheets storage, and email confirmation.
