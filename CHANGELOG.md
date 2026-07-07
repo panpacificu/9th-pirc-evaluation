@@ -1,6 +1,13 @@
 # Changelog
 
 
+## 1.3.5 — Rating Validation Cache Patch
+
+- Added cache-busting query strings for CSS, config, and app JS files.
+- Updated the backend rating validation message to list exactly which questions are missing.
+- Helps diagnose stale frontend files after question updates.
+
+
 ## 1.3.4 — PanpacificU Email Restriction
 
 - Updated the email field label to “Use your PanpacificU Email.”

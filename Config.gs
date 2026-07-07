@@ -147,7 +147,7 @@ function handleEvaluationSubmission_(request) {
     ) {
       return jsonResponse_({
         ok: false,
-        message: 'A response for this email address and batch has already been recorded.'
+        message: 'A response and certificate for this email address and batch have already been recorded. Only one certificate can be issued per participant email.'
       });
     }
 
@@ -337,6 +337,16 @@ function validatePayload_(data) {
     return { ok: false, message: 'Please enter a valid email address.' };
   }
 
+  const allowedEmailDomain = String(APP_CONFIG.ALLOWED_EMAIL_DOMAIN || 'panpacificu.edu.ph').toLowerCase();
+  const organizerEmail = APP_CONFIG.ORGANIZER_EMAIL || 'pirc@panpacificu.edu.ph';
+
+  if (!data.email.endsWith(`@${allowedEmailDomain}`)) {
+    return {
+      ok: false,
+      message: `Use your PanpacificU Email. For outsiders, please contact the organizer, ${organizerEmail}.`
+    };
+  }
+
   if (!APP_CONFIG.CAMPUSES.includes(data.campus)) {
     return { ok: false, message: 'Please select a valid campus.' };
   }
@@ -372,23 +382,33 @@ function validatePayload_(data) {
   }
 
   const fixedRatings = [
-    data.roundTableProfessionals,
-    data.roundTableStudents,
-    data.facultyPresentations,
-    data.liveStudentPresentations,
-    data.studentVideoPresentations,
-    data.posterSession,
-    data.socializationActivities,
-    data.venue,
-    data.food,
-    data.programFlow,
-    data.organization,
-    data.communication,
-    data.valueForMoney
+    ['Round Table Discussion — Professionals', data.roundTableProfessionals],
+    ['Round Table Discussion — Students', data.roundTableStudents],
+    ['Faculty Presentations', data.facultyPresentations],
+    ['Live Student Presentations', data.liveStudentPresentations],
+    ['Student Video Presentations', data.studentVideoPresentations],
+    ['Poster Presentation', data.posterSession],
+    ['Socialization Activities', data.socializationActivities],
+    ['Venue', data.venue],
+    ['Food', data.food],
+    ['Program Flow', data.programFlow],
+    ['Organization', data.organization],
+    ['Communication', data.communication],
+    ['Value for Money', data.valueForMoney]
   ];
 
-  if (!fixedRatings.every(isValidRating_)) {
-    return { ok: false, message: 'Please complete all required rating questions.' };
+  const missingFixedRatings = fixedRatings
+    .filter((pair) => !isValidRating_(pair[1]))
+    .map((pair) => pair[0]);
+
+  if (missingFixedRatings.length > 0) {
+    return {
+      ok: false,
+      message:
+        'Please complete these required rating questions: ' +
+        missingFixedRatings.join(', ') +
+        '. If you already answered them, refresh the page or clear the browser cache.'
+    };
   }
 
   return { ok: true };

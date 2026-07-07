@@ -1,6 +1,6 @@
 # 9th PIRC Evaluation Form
 
-Version **1.3.4** updates the evaluation structure, speaker affiliation, and certificate template.
+Version **1.3.5** updates the evaluation structure, speaker affiliation, and certificate template.
 
 ## Evaluation Updates
 
@@ -109,3 +109,16 @@ ENFORCE_ONE_RESPONSE_PER_EMAIL_AND_BATCH: true
 Only emails ending in `@panpacificu.edu.ph` are accepted.
 
 Outsiders are instructed to contact `pirc@panpacificu.edu.ph`.
+
+
+## v1.3.5 Cache Patch
+
+The public page now loads:
+
+```html
+<link rel="stylesheet" href="styles.css?v=1.3.5">
+<script defer src="config.js?v=1.3.5"></script>
+<script defer src="app.js?v=1.3.5"></script>
+```
+
+This helps prevent users from submitting with old cached frontend files.

@@ -1,5 +1,5 @@
 const APP_CONFIG = Object.freeze({
-  VERSION: '1.3.2',
+  VERSION: '1.3.5',
 
   // Preserve your current Google Sheet ID.
   SPREADSHEET_ID: '1vhj7Bink6MkS5sS0S1_lKqYfQlXDd2zHnfIAfBrMgh8',
@@ -31,7 +31,10 @@ const APP_CONFIG = Object.freeze({
   // The backend also rejects Batch 2 submissions until it is added here.
   ENABLED_BATCHES: ['Batch 1'],
 
-  ENFORCE_ONE_RESPONSE_PER_EMAIL_AND_BATCH: false,
+  ENFORCE_ONE_RESPONSE_PER_EMAIL_AND_BATCH: true,
+
+  ALLOWED_EMAIL_DOMAIN: 'panpacificu.edu.ph',
+  ORGANIZER_EMAIL: 'pirc@panpacificu.edu.ph',
 
   DEFAULT_CLOSED_MESSAGE:
     'We are not currently accepting responses. Please check again later.',
