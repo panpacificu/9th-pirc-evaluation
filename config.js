@@ -1,11 +1,11 @@
 window.PIRC_CONFIG = Object.freeze({
   APP_NAME: "9th PIRC Evaluation Form",
-  VERSION: "1.3.6",
+  VERSION: "1.4.1",
 
   // Preserve your currently deployed Apps Script Web App /exec URL here.
   ENDPOINT_URL: "https://script.google.com/macros/s/AKfycbwQXFJyJhZnkoE8TLuZIpW3QSKid-KNcoiBvmXsDV152kYdviD2sAa10YjaXc2sz-3T/exec",
 
-  ENABLED_BATCHES: ["Batch 2"],
+  ENABLED_BATCHES: ["Batch 1", "Batch 2"],
 
   ALLOWED_EMAIL_DOMAIN: "panpacificu.edu.ph",
   ORGANIZER_EMAIL: "pirc@panpacificu.edu.ph",
@@ -41,6 +41,22 @@ window.PIRC_CONFIG = Object.freeze({
         image: "assets/speakers/le-ha-van.webp"
       }
     ],
-    "Batch 2": []
+    "Batch 2": [
+      {
+        name: "Dr. Ayu Anastasya Rachman",
+        designation: "Universitas Bina Mandiri (UBM) Gorontalo",
+        image: "assets/speakers/ayu-anastasya-rachman.webp"
+      },
+      {
+        name: "Assoc. Prof. Dr. R. Vithyacharan",
+        designation: "Red Sea Associates",
+        image: "assets/speakers/r-vithyacharan.webp"
+      },
+      {
+        name: "Mary Ann Pastrana",
+        designation: "Archipelago Philippine Ferries Corp.",
+        image: "assets/speakers/mary-ann-pastrana.webp"
+      }
+    ]
   }
 });

@@ -1,6 +1,25 @@
 # Changelog
 
 
+## 1.4.1 — Batch 2 Enabled
+
+- Enabled Batch 2 in frontend and backend configuration.
+- Added Batch 2 speaker names and affiliations.
+- Added Batch 2 speaker photos as WebP assets.
+- Preserved High Traffic Mode.
+
+
+## 1.4.0 — High Traffic Mode
+
+- Added `HIGH_TRAFFIC_MODE`.
+- Live submissions now save responses first without generating certificates immediately.
+- Queues email and certificate statuses for later processing.
+- Added batch certificate sender functions:
+  - `processPendingCertificatesSmallBatch()`
+  - `processPendingCertificates()`
+  - `processPendingCertificatesLargeBatch()`
+
+
 ## 1.3.6 — Image-Based Certificate Template
 
 - Switched certificate generation to use the official blank certificate image as the background.

@@ -1,6 +1,6 @@
 # 9th PIRC Evaluation Form
 
-Version **1.3.6** updates the evaluation structure, speaker affiliation, and certificate template.
+Version **1.4.1** updates the evaluation structure, speaker affiliation, and certificate template.
 
 ## Evaluation Updates
 
@@ -143,3 +143,33 @@ NAME_BOX: { LEFT: 120, TOP: 168, WIDTH: 480, HEIGHT: 54 },
 ```
 
 If you need to fine-tune name placement later, adjust `NAME_BOX` in `Config.gs`.
+
+
+## v1.4.0 High Traffic Mode
+
+This version saves responses first and queues certificates for later sending.
+
+```javascript
+HIGH_TRAFFIC_MODE: true
+```
+
+After the event, use:
+
+```javascript
+processPendingCertificates()
+```
+
+to send certificates in controlled batches.
+
+
+## v1.4.1 Batch 2 Enabled
+
+Batch 2 is now active.
+
+### Batch 2 Speakers
+
+- Dr. Ayu Anastasya Rachman — Universitas Bina Mandiri (UBM) Gorontalo
+- Assoc. Prof. Dr. R. Vithyacharan — Red Sea Associates
+- Mary Ann Pastrana — Archipelago Philippine Ferries Corp.
+
+Speaker photos are included in `assets/speakers/`.

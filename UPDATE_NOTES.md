@@ -1,38 +1,53 @@
-# Updating to v1.3.6
+# Updating to v1.4.1 — Batch 2 Enabled
 
-## Certificate Update
+## What changed
 
-This version switches the certificate generation to an image-based template.
+Batch 2 is now enabled in both the frontend and backend.
 
-The package now includes:
+### Batch 2 speakers added
 
-- `apps-script/CertificateTemplate.gs` — embedded blank certificate image
-- `apps-script/Code.gs` — generates the PDF using the embedded image background
-- `apps-script/Config.gs` — includes the name overlay settings
+1. Dr. Ayu Anastasya Rachman  
+   Universitas Bina Mandiri (UBM) Gorontalo
+
+2. Assoc. Prof. Dr. R. Vithyacharan  
+   Red Sea Associates
+
+3. Mary Ann Pastrana  
+   Archipelago Philippine Ferries Corp.
+
+Their photos were added under:
+
+```text
+assets/speakers/
+```
+
+## Files to replace on GitHub
+
+Replace:
+
+- `config.js`
+- `app.js`
+- `index.html`
+- `assets/speakers/ayu-anastasya-rachman.webp`
+- `assets/speakers/r-vithyacharan.webp`
+- `assets/speakers/mary-ann-pastrana.webp`
 
 ## Files to replace in Apps Script
 
-Replace or add these files:
+Replace:
 
-- `Code.gs`
 - `Config.gs`
-- `CertificateTemplate.gs`
 
-You do not need to upload the certificate image separately to Google Drive.
+`Code.gs` does not need to be replaced if you already installed v1.4.0 High Traffic Mode.
 
-## Then do this
+## After updating Apps Script
 
-1. Save the Apps Script project.
-2. Run:
-
-```javascript
-createCertificatePreview()
-```
-
-3. Check the preview PDF in Google Drive.
-4. If the name needs slight repositioning, adjust `NAME_BOX` in `Config.gs`.
-5. Redeploy Apps Script:
+Save and redeploy:
 
 **Deploy → Manage deployments → Edit → New version → Deploy**
 
 Keep the same `/exec` URL.
+
+## Important certificate note
+
+The current embedded certificate image is still the Batch 1 certificate background dated 13–14 July 2026. Since High Traffic Mode queues certificates for later, responses can be collected now safely. Before sending Batch 2 certificates, update the certificate template image if the Batch 2 certificate needs different dates/details.
