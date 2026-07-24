@@ -1,33 +1,20 @@
-# Updating to v1.4.2 — Batch 2 + HTML Fix
+# Updating to v1.4.3 — Batch 2 Unlocked
 
 ## Fix
 
-This version fixes the issue where the public page showed only the hero/intro section and did not render the form.
+Batch 2 was enabled in `config.js` and `Config.gs`, but the actual Batch 2 radio button in `index.html` still had the `disabled` attribute.
 
-Cause: the previous package accidentally corrupted part of `index.html` during cache-busting.
-
-## Batch 2 Enabled
-
-Batch 2 is enabled in both:
-
-- `config.js`
-- `Config.gs`
-
-### Batch 2 Speakers
-
-1. Dr. Ayu Anastasya Rachman — Universitas Bina Mandiri (UBM) Gorontalo
-2. Assoc. Prof. Dr. R. Vithyacharan — Red Sea Associates
-3. Mary Ann Pastrana — Archipelago Philippine Ferries Corp.
+This version removes that disabled state and adds a small frontend guard so the button availability follows `ENABLED_BATCHES`.
 
 ## Files to replace on GitHub
 
 Replace:
 
 - `index.html`
-- `config.js`
 - `app.js`
+- `config.js`
 
-Upload these new files:
+The Batch 2 speaker image files from v1.4.2 should remain uploaded:
 
 - `assets/speakers/ayu-anastasya-rachman.webp`
 - `assets/speakers/r-vithyacharan.webp`
@@ -43,9 +30,8 @@ Replace:
 
 ## After updating
 
-1. Commit/upload the GitHub files.
+1. Upload/commit the GitHub files.
 2. Save Apps Script after replacing `Config.gs`.
 3. Redeploy Apps Script as a new version.
 4. Open the form in an incognito/private window.
-5. Confirm footer shows Version 1.4.2.
-6. Scroll/check that the participant form appears after the hero section.
+5. Confirm Batch 2 says `Now available` and is clickable.

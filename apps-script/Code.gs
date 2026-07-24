@@ -164,6 +164,29 @@ function handleEvaluationSubmission_(request) {
     lock.releaseLock();
   }
 
+  if (APP_CONFIG.HIGH_TRAFFIC_MODE) {
+    sheet.getRange(rowNumber, 30, 1, 2).setValues([[
+      'Queued',
+      ''
+    ]]);
+
+    sheet.getRange(rowNumber, 34, 1, 2).setValues([[
+      'Pending',
+      ''
+    ]]);
+
+    return jsonResponse_({
+      ok: true,
+      reference: payload.submissionId,
+      highTrafficMode: true,
+      emailSent: false,
+      certificateSent: false,
+      message:
+        APP_CONFIG.HIGH_TRAFFIC_MESSAGE ||
+        'Your evaluation response has been recorded. Your certificate will be emailed after the event.'
+    });
+  }
+
   const deliveryResult = sendConfirmationEmail_(payload);
 
   sheet.getRange(rowNumber, 30, 1, 2).setValues([[
@@ -1077,6 +1100,138 @@ function sanitizeFileName_(value) {
 
   return safe || 'Participant';
 }
+
+
+function processPendingCertificates() {
+  return processPendingCertificatesBatch_(25);
+}
+
+function processPendingCertificatesSmallBatch() {
+  return processPendingCertificatesBatch_(10);
+}
+
+function processPendingCertificatesLargeBatch() {
+  return processPendingCertificatesBatch_(50);
+}
+
+function processPendingCertificatesBatch_(limit) {
+  const sheet = getOrCreateSheet_();
+  const lastRow = sheet.getLastRow();
+
+  if (lastRow < 2) {
+    console.log('No responses to process.');
+    return;
+  }
+
+  const rowCount = lastRow - 1;
+  const values = sheet.getRange(2, 1, rowCount, SHEET_HEADERS.length).getValues();
+  let processed = 0;
+  let skipped = 0;
+  let failed = 0;
+
+  for (let index = 0; index < values.length; index += 1) {
+    if (processed >= limit) {
+      break;
+    }
+
+    const row = values[index];
+    const actualRowNumber = index + 2;
+    const emailStatus = cleanText_(row[29], 40).toLowerCase();
+    const certificateStatus = cleanText_(row[33], 80).toLowerCase();
+
+    const alreadyDone =
+      emailStatus === 'sent' ||
+      certificateStatus === 'attached' ||
+      certificateStatus === 'sent';
+
+    if (alreadyDone) {
+      skipped += 1;
+      continue;
+    }
+
+    const data = rowToSubmissionData_(row);
+
+    if (!data.email || !data.fullName || !data.submissionId) {
+      const error = 'Missing required recipient data.';
+      sheet.getRange(actualRowNumber, 30, 1, 2).setValues([['Failed', error]]);
+      sheet.getRange(actualRowNumber, 34, 1, 2).setValues([['Failed', error]]);
+      failed += 1;
+      continue;
+    }
+
+    try {
+      const deliveryResult = sendConfirmationEmail_(data);
+
+      sheet.getRange(actualRowNumber, 30, 1, 2).setValues([[
+        deliveryResult.emailSent ? 'Sent' : 'Not Sent',
+        deliveryResult.emailError || ''
+      ]]);
+
+      sheet.getRange(actualRowNumber, 34, 1, 2).setValues([[
+        deliveryResult.certificateStatus,
+        deliveryResult.certificateError || ''
+      ]]);
+
+      processed += 1;
+    } catch (error) {
+      const message = String(error && error.message ? error.message : error);
+
+      sheet.getRange(actualRowNumber, 30, 1, 2).setValues([[
+        'Failed',
+        message
+      ]]);
+
+      sheet.getRange(actualRowNumber, 34, 1, 2).setValues([[
+        'Failed',
+        message
+      ]]);
+
+      failed += 1;
+    }
+
+    Utilities.sleep(500);
+  }
+
+  console.log(
+    `Pending certificate processing complete. Processed: ${processed}; skipped: ${skipped}; failed: ${failed}; limit: ${limit}.`
+  );
+}
+
+function rowToSubmissionData_(row) {
+  return {
+    submissionId: cleanText_(row[1], 80),
+    fullName: cleanText_(row[2], 120),
+    email: cleanText_(row[3], 160).toLowerCase(),
+    campus: cleanText_(row[4], 80),
+    batch: cleanText_(row[5], 80),
+    school: cleanText_(row[6], 180),
+    speaker1Name: cleanText_(row[7], 180),
+    speaker1Rating: cleanText_(row[8], 1),
+    speaker2Name: cleanText_(row[9], 180),
+    speaker2Rating: cleanText_(row[10], 1),
+    speaker3Name: cleanText_(row[11], 180),
+    speaker3Rating: cleanText_(row[12], 1),
+    speaker4Name: cleanText_(row[13], 180),
+    speaker4Rating: cleanText_(row[14], 1),
+    roundTableProfessionals: cleanText_(row[15], 1),
+    roundTableStudents: cleanText_(row[16], 1),
+    facultyPresentations: cleanText_(row[17], 1),
+    liveStudentPresentations: cleanText_(row[18], 1),
+    studentVideoPresentations: cleanText_(row[19], 1),
+    posterSession: cleanText_(row[20], 1),
+    socializationActivities: cleanText_(row[21], 1),
+    venue: cleanText_(row[22], 1),
+    food: cleanText_(row[23], 1),
+    programFlow: cleanText_(row[24], 1),
+    organization: cleanText_(row[25], 1),
+    communication: cleanText_(row[26], 1),
+    valueForMoney: cleanText_(row[27], 1),
+    comments: cleanText_(row[28], 2000),
+    userAgent: cleanText_(row[31], 500),
+    pageUrl: cleanText_(row[32], 500)
+  };
+}
+
 
 function buildConfirmationEmail_(data, certificateIncluded) {
   const safeName = escapeHtml_(data.fullName);

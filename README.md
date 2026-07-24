@@ -1,6 +1,6 @@
 # 9th PIRC Evaluation Form
 
-Version **1.4.2** updates the evaluation structure, speaker affiliation, and certificate template.
+Version **1.4.3** updates the evaluation structure, speaker affiliation, and certificate template.
 
 ## Evaluation Updates
 
@@ -167,3 +167,8 @@ to send certificates in controlled batches.
 This fixes the form rendering issue from v1.4.1 and keeps High Traffic Mode enabled.
 
 Batch 2 is active with the three speaker photos included in `assets/speakers/`.
+
+
+## v1.4.3 Batch 2 Unlocked
+
+Batch 2 is now clickable in the frontend. The radio button no longer has the hardcoded `disabled` attribute.

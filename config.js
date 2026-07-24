@@ -1,11 +1,11 @@
 window.PIRC_CONFIG = Object.freeze({
   APP_NAME: "9th PIRC Evaluation Form",
-  VERSION: "1.4.2",
+  VERSION: "1.4.3",
 
   // Preserve your currently deployed Apps Script Web App /exec URL here.
   ENDPOINT_URL: "https://script.google.com/macros/s/AKfycbwQXFJyJhZnkoE8TLuZIpW3QSKid-KNcoiBvmXsDV152kYdviD2sAa10YjaXc2sz-3T/exec",
 
-  ENABLED_BATCHES: ["Batch 2"],
+  ENABLED_BATCHES: ["Batch 1", "Batch 2"],
 
   ALLOWED_EMAIL_DOMAIN: "panpacificu.edu.ph",
   ORGANIZER_EMAIL: "pirc@panpacificu.edu.ph",

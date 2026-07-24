@@ -1,5 +1,5 @@
 const APP_CONFIG = Object.freeze({
-  VERSION: '1.3.6',
+  VERSION: '1.4.3',
 
   // Preserve your current Google Sheet ID.
   SPREADSHEET_ID: '1vhj7Bink6MkS5sS0S1_lKqYfQlXDd2zHnfIAfBrMgh8',
@@ -31,9 +31,16 @@ const APP_CONFIG = Object.freeze({
 
   // Batch 2 is visible but disabled in the public form.
   // The backend also rejects Batch 2 submissions until it is added here.
-  ENABLED_BATCHES: ['Batch 1'],
+  ENABLED_BATCHES: ['Batch 1', 'Batch 2'],
 
   ENFORCE_ONE_RESPONSE_PER_EMAIL_AND_BATCH: true,
+
+  // High Traffic Mode:
+  // true  = save response first; send certificate/email later in batches.
+  // false = generate certificate/email immediately after submission.
+  HIGH_TRAFFIC_MODE: true,
+  HIGH_TRAFFIC_MESSAGE:
+    'Your evaluation response has been recorded. Your certificate will be emailed after the event.',
 
   ALLOWED_EMAIL_DOMAIN: 'panpacificu.edu.ph',
   ORGANIZER_EMAIL: 'pirc@panpacificu.edu.ph',
@@ -62,6 +69,10 @@ const APP_CONFIG = Object.freeze({
       'Aurelio Agcaoili — University of Hawaii in Manoa',
       'Le Ha Van — Swinburne University of Technology, Vietnam'
     ],
-    'Batch 2': []
+    'Batch 2': [
+      'Dr. Ayu Anastasya Rachman — Universitas Bina Mandiri (UBM) Gorontalo',
+      'Assoc. Prof. Dr. R. Vithyacharan — Red Sea Associates',
+      'Mary Ann Pastrana — Archipelago Philippine Ferries Corp.'
+    ]
   }
 });

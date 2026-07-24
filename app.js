@@ -128,6 +128,32 @@
     experienceQuestions.innerHTML = experienceItems.map(ratingRow).join("");
   }
 
+  function applyBatchAvailability() {
+    batchInputs.forEach((input) => {
+      const isEnabled = CONFIG.ENABLED_BATCHES.includes(input.value);
+      const label = input.closest("label");
+      const small = label ? label.querySelector("small") : null;
+
+      input.disabled = !isEnabled;
+
+      if (label) {
+        label.classList.toggle("choice-disabled", !isEnabled);
+        label.setAttribute(
+          "aria-label",
+          isEnabled ? `${input.value} is available` : `${input.value} is not yet available`
+        );
+      }
+
+      if (small) {
+        small.textContent = isEnabled ? "Now available" : "Available later";
+      }
+
+      if (!isEnabled && input.checked) {
+        input.checked = false;
+      }
+    });
+  }
+
   function clearSpeakerHiddenFields() {
     for (let index = 1; index <= 4; index += 1) {
       const field = document.getElementById(`speaker${index}Name`);
@@ -425,6 +451,7 @@
   setupNotice.hidden = isEndpointConfigured();
 
   renderStaticQuestions();
+  applyBatchAvailability();
   updateProgress();
   loadFormStatus();
 })();

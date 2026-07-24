@@ -1,6 +1,13 @@
 # Changelog
 
 
+## 1.4.3 — Batch 2 Unlocked
+
+- Removed the hardcoded disabled state from the Batch 2 radio button.
+- Added dynamic batch availability handling in `app.js`.
+- Preserved Batch 2 speaker data and High Traffic Mode.
+
+
 ## 1.4.2 — Batch 2 HTML Fix
 
 - Fixed corrupted `index.html` from v1.4.1.
