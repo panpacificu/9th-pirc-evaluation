@@ -1,11 +1,11 @@
 # Changelog
 
 
-## 1.4.1 — Batch 2 Enabled
+## 1.4.2 — Batch 2 HTML Fix
 
-- Enabled Batch 2 in frontend and backend configuration.
-- Added Batch 2 speaker names and affiliations.
-- Added Batch 2 speaker photos as WebP assets.
+- Fixed corrupted `index.html` from v1.4.1.
+- Batch 2 remains enabled.
+- Added Batch 2 speaker photos.
 - Preserved High Traffic Mode.
 
 

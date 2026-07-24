@@ -1,33 +1,34 @@
-# Updating to v1.4.1 — Batch 2 Enabled
+# Updating to v1.4.2 — Batch 2 + HTML Fix
 
-## What changed
+## Fix
 
-Batch 2 is now enabled in both the frontend and backend.
+This version fixes the issue where the public page showed only the hero/intro section and did not render the form.
 
-### Batch 2 speakers added
+Cause: the previous package accidentally corrupted part of `index.html` during cache-busting.
 
-1. Dr. Ayu Anastasya Rachman  
-   Universitas Bina Mandiri (UBM) Gorontalo
+## Batch 2 Enabled
 
-2. Assoc. Prof. Dr. R. Vithyacharan  
-   Red Sea Associates
+Batch 2 is enabled in both:
 
-3. Mary Ann Pastrana  
-   Archipelago Philippine Ferries Corp.
+- `config.js`
+- `Config.gs`
 
-Their photos were added under:
+### Batch 2 Speakers
 
-```text
-assets/speakers/
-```
+1. Dr. Ayu Anastasya Rachman — Universitas Bina Mandiri (UBM) Gorontalo
+2. Assoc. Prof. Dr. R. Vithyacharan — Red Sea Associates
+3. Mary Ann Pastrana — Archipelago Philippine Ferries Corp.
 
 ## Files to replace on GitHub
 
 Replace:
 
+- `index.html`
 - `config.js`
 - `app.js`
-- `index.html`
+
+Upload these new files:
+
 - `assets/speakers/ayu-anastasya-rachman.webp`
 - `assets/speakers/r-vithyacharan.webp`
 - `assets/speakers/mary-ann-pastrana.webp`
@@ -38,16 +39,13 @@ Replace:
 
 - `Config.gs`
 
-`Code.gs` does not need to be replaced if you already installed v1.4.0 High Traffic Mode.
+`Code.gs` does not need to be replaced if v1.4.0 High Traffic Mode is already installed.
 
-## After updating Apps Script
+## After updating
 
-Save and redeploy:
-
-**Deploy → Manage deployments → Edit → New version → Deploy**
-
-Keep the same `/exec` URL.
-
-## Important certificate note
-
-The current embedded certificate image is still the Batch 1 certificate background dated 13–14 July 2026. Since High Traffic Mode queues certificates for later, responses can be collected now safely. Before sending Batch 2 certificates, update the certificate template image if the Batch 2 certificate needs different dates/details.
+1. Commit/upload the GitHub files.
+2. Save Apps Script after replacing `Config.gs`.
+3. Redeploy Apps Script as a new version.
+4. Open the form in an incognito/private window.
+5. Confirm footer shows Version 1.4.2.
+6. Scroll/check that the participant form appears after the hero section.

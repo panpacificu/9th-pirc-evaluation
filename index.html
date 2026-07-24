@@ -11,9 +11,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="styles.css?v=1.4.1">
-  <script defer src="config.js?v=1.4.1"></script>
-  <script defer src="app.js?v=1.4.1"></script>
+  <link rel="stylesheet" href="styles.css?v=1.4.2">
+  <script defer src="config.js?v=1.4.2"></script>
+  <script defer src="app.js?v=1.4.2"></script>
 </head>
 <body>
   <div class="page-ribbon page-ribbon--one" aria-hidden="true"></div>
@@ -69,7 +69,10 @@
 
     <div id="setupNotice" class="setup-notice" hidden>
       <strong>Setup required:</strong>
-      Add the deployed Apps Script Web App URL in <code>config.js?v=1.4.1"formStatusLoading" class="status-panel status-panel--loading">
+      Add the deployed Apps Script Web App URL in <code>config.js</code> before accepting live responses.
+    </div>
+
+    <section id="formStatusLoading" class="status-panel status-panel--loading">
       <div class="status-spinner" aria-hidden="true"></div>
       <p>Checking whether the evaluation form is accepting responses...</p>
     </section>
